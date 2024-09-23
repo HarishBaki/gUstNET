@@ -6,6 +6,7 @@ import tensorflow as tf
 
 # Get the SLURM rank
 rank = int(os.environ['SLURM_PROCID'])
+print(f"Rank {rank}: Starting...")
 num_gpus = len(tf.config.experimental.list_physical_devices('GPU'))
 
 # List available GPUs
@@ -13,7 +14,6 @@ gpus = tf.config.experimental.list_physical_devices('GPU')
 
 print(gpus)
 
-'''
 if gpus:
     # Restrict TensorFlow to only use one GPU per process based on rank
     try:
