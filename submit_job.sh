@@ -1,7 +1,8 @@
 #!/bin/bash
 #SBATCH --partition=compute
-#SBATCH --gres=gpu:3
 #SBATCH --output=/home/harish/scratch/%j.out
+#SBATCH --gres=gpu:3
+
 
 # This needs to point to your conda env directory
 CONDA_ENV=/home/harish/miniconda3/envs/gUstNET
@@ -11,5 +12,5 @@ unset CONDA_SHLVL
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate $CONDA_ENV
 
-python gpu_rank.py
+srun python train.py
 
