@@ -4,3 +4,4 @@ Events/
 *.mp4
 *.nc
 *.zarr
+wandb/

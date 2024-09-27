@@ -11,5 +11,5 @@ unset CONDA_SHLVL
 source "$(conda info --base)/etc/profile.d/conda.sh"
 conda activate $CONDA_ENV
 
-python -u train.py
+python -u train_with_direct_fit.py
 
