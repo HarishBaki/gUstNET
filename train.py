@@ -3,7 +3,7 @@ import os
 #Only CPUs
 #os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Specify the GPUs to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
 nGPUs = len(os.environ["CUDA_VISIBLE_DEVICES"].split(','))
 print('Using GPUs:', os.environ["CUDA_VISIBLE_DEVICES"], 'Total:', nGPUs)
 
@@ -58,14 +58,8 @@ Y_val = data.sel(time=Y_val_times).transpose('sample', 'y', 'x','time_window')
 X_test = data.sel(time=X_test_times).transpose('sample', 'y', 'x','time_window')
 Y_test = data.sel(time=Y_test_times).transpose('sample', 'y', 'x','time_window')
 
-# --------------------------------------------------------------
-# Batches data load
-# --------------------------------------------------------------
-def batch_data_load(var, start, end):
-    return tf.convert_to_tensor(var[start:end,...].compute().values, dtype=tf.float32)
-
 # Set batch size and compute number of batches
-small_batch_size = 8
+small_batch_size = 16
 batch_size = small_batch_size * nGPUs
 
 # To fit the samples equally into the GPUs and batches, we need to exclude the remaining bathces
@@ -87,6 +81,16 @@ num_train_samples = len(X_train)
 num_val_samples = len(X_val)
 num_train_batches = num_train_samples // batch_size
 num_val_batches = num_val_samples // batch_size
+
+print('Number of training samples:', num_train_samples, 'Number of training batches:', num_train_batches, 
+      'Number of validation samples:', num_val_samples, 'Number of validation batches:', num_val_batches)
+
+# --------------------------------------------------------------
+# Batches data load
+# --------------------------------------------------------------
+def batch_data_load(var, start, end):
+    #return tf.convert_to_tensor(var.sel(sample=slice(start,end)).values, dtype=tf.float32)
+    return var.sel(sample=slice(start,end)).values
 
 #--------------------------------------------#
 # --- Initialize model ---#
@@ -156,6 +160,7 @@ for epoch in range(100):  # Number of epochs
         # Reduce losses from all GPUs
         batch_loss = strategy.reduce(tf.distribute.ReduceOp.SUM, per_replica_losses, axis=None)
         epoch_train_loss += batch_loss
+        
 
     # Compute average training loss for the epoch
     avg_train_loss = epoch_train_loss / num_train_batches
@@ -198,7 +203,7 @@ for epoch in range(100):  # Number of epochs
         break
 
     print("-" * 50)
-
+    
 #--------------------------------------------#
 # --- Evaluate model ---#
 #--------------------------------------------#
