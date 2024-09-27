@@ -3,7 +3,7 @@ import os
 #Only CPUs
 #os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 # Specify the GPUs to use
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 nGPUs = len(os.environ["CUDA_VISIBLE_DEVICES"].split(','))
 print('Using GPUs:', os.environ["CUDA_VISIBLE_DEVICES"], 'Total:', nGPUs)
 
@@ -28,7 +28,8 @@ strategy = tf.distribute.MirroredStrategy()
 tf.get_logger().setLevel(tf.compat.v1.logging.ERROR)
 
 # set the directory to current directory
-root_dir = '/data/harish/'
+root_dir = '/home/harish/gUstNet'
+data_dir = '/data/harish/'
 
 sys.path.append(root_dir)
 from libraries import *
@@ -38,7 +39,7 @@ from Google_UNet import build_unet
 #--------------------------------------------#
 # --- Loading data ---#
 #--------------------------------------------#
-zarr_path = f'{root_dir}/rtma_i10fg_NYS_subset.zarr'
+zarr_path = f'{data_dir}/rtma_i10fg_NYS_subset.zarr'
 train_val_dates_range = ('2021-01-01T00', '2022-12-31T23')
 # Define input/output window sizes
 in_times = 3   # Example: 24 input hours (1 day)
@@ -103,7 +104,7 @@ with strategy.scope():
     print(generator.summary())
 
 # Function to compute loss and gradients
-@tf.function
+#@tf.function
 def train_step(X_batch, Y_batch):
     with tf.GradientTape() as tape:
         Y_pred = generator(X_batch, training=True)
@@ -113,7 +114,7 @@ def train_step(X_batch, Y_batch):
     return loss
 
 # Validation step
-@tf.function
+#@tf.function
 def val_step(X_batch, Y_batch):
     predictions = generator(X_batch, training=False)
     loss = tf.keras.losses.MeanAbsoluteError()(Y_batch, predictions)
@@ -147,7 +148,7 @@ for epoch in range(100):  # Number of epochs
         X_batch = batch_data_load(X_train_shuffled, start_idx, end_idx)
         Y_batch = batch_data_load(Y_train_shuffled, start_idx, end_idx)
         
-        print(X_batch.shape,Y_batch.shape)
+        print(f"Batch {batch_idx}: X_batch shape: {X_batch.shape}, Y_batch shape: {Y_batch.shape}")
 
         # Distribute batch across GPUs and train
         per_replica_losses = strategy.run(train_step, args=(X_batch, Y_batch))

@@ -1,7 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=compute
 #SBATCH --output=/home/harish/scratch/%j.out
-#SBATCH --gres=gpu:3
 
 
 # This needs to point to your conda env directory
