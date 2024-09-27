@@ -40,15 +40,18 @@ from Google_UNet import build_unet
 # --- Loading data ---#
 #--------------------------------------------#
 zarr_path = f'{data_dir}/rtma_i10fg_NYS_subset.zarr'
-train_val_dates_range = ('2021-01-01T00', '2022-12-31T23')
+
 # Define input/output window sizes
 in_times = 3   # Example: 24 input hours (1 day)
 out_times = 1   # Example: 6 output hours (6-hour prediction)
-X_train_times, Y_train_times, X_val_times, Y_val_times = RTMA_data_splitting(zarr_path,train_val_dates_range,in_times,out_times,opt_test=False)
 
+# Extract training, validation and test sample times
+train_val_dates_range = ('2021-01-01T00', '2022-12-31T23')
+X_train_times, Y_train_times, X_val_times, Y_val_times = RTMA_data_splitting(zarr_path,train_val_dates_range,in_times,out_times,opt_test=False)
 test_dates_range = ('2023-01-01T00', '2023-12-31T23')
 X_test_times, Y_test_times = RTMA_data_splitting(zarr_path,test_dates_range,in_times,out_times,opt_test=True)
 
+# Extract training, validation and test data using the sample times
 ds = xr.open_zarr(zarr_path)
 data = ds.i10fg#.transpose(..., 'time')
 X_train = data.sel(time=X_train_times).transpose('sample', 'y', 'x','time_window')
@@ -57,6 +60,14 @@ X_val = data.sel(time=X_val_times).transpose('sample', 'y', 'x','time_window')
 Y_val = data.sel(time=Y_val_times).transpose('sample', 'y', 'x','time_window')
 X_test = data.sel(time=X_test_times).transpose('sample', 'y', 'x','time_window')
 Y_test = data.sel(time=Y_test_times).transpose('sample', 'y', 'x','time_window')
+
+# Permutate the samples
+X_train = X_train[np.random.permutation(X_train.shape[0])]
+Y_train = Y_train[np.random.permutation(Y_train.shape[0])]
+X_val = X_val[np.random.permutation(X_val.shape[0])]
+Y_val = Y_val[np.random.permutation(Y_val.shape[0])]
+X_test = X_test[np.random.permutation(X_test.shape[0])]
+Y_test = Y_test[np.random.permutation(Y_test.shape[0])]
 
 # Set batch size and compute number of batches
 small_batch_size = 16
