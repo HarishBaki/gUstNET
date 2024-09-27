@@ -103,27 +103,19 @@ num_val_batches = num_val_samples // batch_size
 print('Number of training samples:', num_train_samples, 'Number of training batches:', num_train_batches, 
       'Number of validation samples:', num_val_samples, 'Number of validation batches:', num_val_batches)
 
-generator = build_unet((X_train.shape[1], X_train.shape[2], X_train.shape[3]))
-
-# --------------------------------------------------------------
-# Batches data load
-# --------------------------------------------------------------
-def batch_data_load(var, start, end):
-    #return tf.convert_to_tensor(var.sel(sample=slice(start,end)).values, dtype=tf.float32)
-    return var.sel(sample=slice(start,end)).values
-
 #--------------------------------------------#
 # --- Initialize model ---#
 #--------------------------------------------#
-generator = build_unet((X_train.shape[1], X_train.shape[2], X_train.shape[3]))
-print(generator.summary())
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
-generator.compile(
-    optimizer=Adam(learning_rate=1e-3),
-    loss=MeanSquaredError(),
-    metrics=[RootMeanSquaredError(), MeanAbsoluteError()]
-)
+with strategy.scope():
+    generator = build_unet((X_train.shape[1], X_train.shape[2], X_train.shape[3]))
+    print(generator.summary())
+    generator.compile(
+        optimizer=Adam(learning_rate=1e-3),
+        loss=MeanSquaredError(),
+        metrics=[RootMeanSquaredError(), MeanAbsoluteError()]
+    )
 
 # Now train the model using the shuffled data
 generator.fit(
