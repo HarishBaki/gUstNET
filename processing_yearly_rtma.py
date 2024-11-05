@@ -7,12 +7,17 @@ import os, sys, time, glob, re
 root_dir = '/data/harish'
 os.chdir(root_dir)
 
-year = sys.argv[1]
+variable = sys.argv[1]
+year = sys.argv[2]
 
 files = sorted(glob.glob(f'{root_dir}/intermediate_files/{year}*.nc'))
 
 ds  = xr.open_mfdataset(files,concat_dim='time',combine='nested')
 ds = ds.compute()
 
-ds.to_netcdf(f'{root_dir}/rtma_i10fg_NYS_subset/{year}.nc')
+# makedir if not exists
+target_dir = f'{root_dir}/rtma_{variable}_NYS_subset'
+if not os.path.exists(target_dir):
+    os.makedirs(target_dir)
+ds.to_netcdf(f'{target_dir}/{year}.nc')
 

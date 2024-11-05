@@ -9,10 +9,10 @@ os.chdir(root_dir)
 
 # take yearmonthday folder name as input
 date = sys.argv[1]
-
+wild_key = sys.argv[2]
 
 # read files in sorted order with keywords in the ascending order t00z, t01z, ... , t23z
-files = glob.glob(f'{root_dir}/rtma/{date}/*')
+files = glob.glob(f'{root_dir}/rtma/{date}/*{wild_key}*')
 def extract_hour(file):
     # Match the pattern 'tXXz' where XX is the hour (e.g., t00z, t01z, etc.)
     match = re.search(r't(\d{2})z', file)

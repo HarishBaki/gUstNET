@@ -10,8 +10,6 @@ day = sys.argv[5]
 hour = sys.argv[6]
 download_path = sys.argv[7]
 
-download_path = "/data/harish"
-
 H = Herbie(
     f"{year}-{month}-{day}T{hour}:00:00",
     model="rtma",
