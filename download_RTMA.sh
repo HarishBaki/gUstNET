@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Variables to be passed to Python script
-VARIABLES=("HGT" "TMP" "UGRD" "VGRD") # "GUST"
-VARIABLES=("VGRD") # "GUST"
-LEVELS=("surface" "2 m" "10 m" "10 m") # "2 m"
-LEVELS=("10 m") # "2 m"
+VARIABLES=("GUST" "HGT" "TMP" "WIND" "WDIR" "DPT" "SPFH" "PRES") 
+LEVELS=("10 m" "surface" "2 m" "10 m" "10 m" "2 m" "2 m" "surface")
+VARIABLES=("WIND") 
+LEVELS=("10 m") 
 # Loop over each index in the VARIABLES array
 for i in "${!VARIABLES[@]}"; do
 	VARIABLE="${VARIABLES[i]}"
 	LEVEL="${LEVELS[i]}"
-	DOWNLOAD_PATH="/data/harish/$VARISBLE"
+	DOWNLOAD_PATH="/data/harish/$VARIABLE"
 
 	# Loop over the years 2018 to 2023
 	for year in {2018..2023}; do
