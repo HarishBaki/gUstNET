@@ -3,8 +3,8 @@
 # Variables to be passed to Python script
 VARIABLES=("GUST" "HGT" "TMP" "WIND" "WDIR" "DPT" "SPFH" "PRES") 
 LEVELS=("10 m" "surface" "2 m" "10 m" "10 m" "2 m" "2 m" "surface")
-VARIABLES=("WIND" "WDIR" "DPT" "SPFH" "PRES") 
-LEVELS=("10 m" "10 m" "2 m" "2 m" "surface") 
+VARIABLES=("PRES") 
+LEVELS=("surface") 
 # Loop over each index in the VARIABLES array
 for i in "${!VARIABLES[@]}"; do
 	VARIABLE="${VARIABLES[i]}"
@@ -12,7 +12,7 @@ for i in "${!VARIABLES[@]}"; do
 	DOWNLOAD_PATH="/data/harish/RTMA/$VARIABLE"
 
 	# Loop over the years 2018 to 2023
-	for year in {2018..2023}; do
+	for year in {2021..2023}; do
 	  # Loop over the months 1 to 12
 	  for month in {1..12}; do
 	    # Determine the number of days in the month, accounting for leap years

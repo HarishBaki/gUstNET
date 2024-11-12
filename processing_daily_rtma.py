@@ -12,7 +12,7 @@ date = sys.argv[1]
 variable = sys.argv[2]
 
 # read files in sorted order with keywords in the ascending order t00z, t01z, ... , t23z
-files = glob.glob(f'{root_dir}/RTMA/{variable}/{date}/*')
+files = glob.glob(f'{root_dir}/RTMA/{variable}/rtma/{date}/*')
 def extract_hour(file):
     # Match the pattern 'tXXz' where XX is the hour (e.g., t00z, t01z, etc.)
     match = re.search(r't(\d{2})z', file)

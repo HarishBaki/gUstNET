@@ -1,16 +1,14 @@
 #!/bin/bash
-variables=("u10" "orog" "t2m") # "v10"
-wild_keys=("ed__" "5e__" "75__") # "d5__"
+variables=("PRES")
 max_concurrent_runs=48  # Maximum concurrent runs
 run_count=0             # Counter for tracking concurrent runs
 
 # Loop over variables and wild_keys simultaneously
 for i in "${!variables[@]}"; do
     variable="${variables[i]}"
-    wild_key="${wild_keys[i]}"
 
     # Loop over the years 2018 to 2023
-    for year in {2018..2022}; do
+    for year in {2021..2021}; do
         # Loop over the months 1 to 12
         for month in {01..12}; do
             # Determine the number of days in the month, accounting for leap years
@@ -30,10 +28,10 @@ for i in "${!variables[@]}"; do
             # Loop over the days of the month
             for day in $(seq -w 1 $days_in_month); do
                 time="$year$month$day"
-                echo "Processing $time with variable=$variable and wild_key=$wild_key"
+                echo "Processing $time with variable=$variable"
                 
                 # Run the Python script with the arguments
-                python processing_daily_rtma.py "$time" "$wild_key" &
+                python processing_daily_rtma.py "$time" "$variable" &
 
                 ((run_count++))
 
