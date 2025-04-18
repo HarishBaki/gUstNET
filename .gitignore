@@ -1,3 +1,4 @@
+*__pycache__
 Events/
 *.nc
 *.png
@@ -5,3 +6,9 @@ Events/
 *.nc
 *.zarr
 wandb/
+corrdiff/checkpoints_diffusion/
+corrdiff/checkpoints_regression/
+*tensorboard*
+*.hydra
+corrdiff/
+Notebooks/
